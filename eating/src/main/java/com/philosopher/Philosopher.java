@@ -4,7 +4,6 @@ public class Philosopher extends Thread {
     String name;
     Fork leftFork;
     Fork rightFork;
-    boolean isEating = false;
 
     public Philosopher(String name, Fork rightFork, Fork leftFork) {
         this.name = name;
@@ -12,32 +11,62 @@ public class Philosopher extends Thread {
         this.rightFork = rightFork;
     }
 
-    public void run() {
-        if (leftFork.status && rightFork.status) {
-            // Communicate to other threads the forks are being used, use notifyAll() method
-            leftFork.status = false;
-            rightFork.status = false;
-            isEating = true;
-            System.out.println(name + " is eating");
+    public void think() {
+        System.out.println("\n" + name + " is thinking.");
 
-            try {
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
-
-            // Communicate to other threads the forks are done being used, use notifyAll() method
-            leftFork.status = true;
-            rightFork.status = true;
-            isEating = false;
-            System.out.println(name + " is done eating");
-        } else {
-            System.out.println(name + " is waiting to eat");
-
-            // wait to be notifyed by other threads
-            // wait();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
     }
 
+    public void eat() {
+        synchronized(leftFork) {
+            while (!leftFork.isAvailable()) {
+                try {
+                    leftFork.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            synchronized(rightFork) {
+                while (!rightFork.isAvailable()) {
+                    try {
+                        rightFork.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                rightFork.setStatus(false);
+                leftFork.setStatus(false);
+                System.out.println("\n" + name + " is eating");
+
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                rightFork.setStatus(true);
+                leftFork.setStatus(true);
+                System.out.println("\n" + name + " is full!");
+
+                leftFork.notifyAll();
+                rightFork.notifyAll();
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            
+            eat();
+            think();
+            
+        }
+    }
 }

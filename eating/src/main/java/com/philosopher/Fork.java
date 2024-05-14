@@ -1,12 +1,12 @@
 package com.philosopher;
 
 public class Fork {
-    boolean status = true;
+    private boolean available = true;
 
-    public synchronized boolean getFork() {
-        return status;
+    public boolean isAvailable() {
+        return available;
     }
-    public synchronized void setFork(boolean status) {
-        this.status = status;
+    public void setStatus(boolean available) {
+        this.available = available;
     }
 }
