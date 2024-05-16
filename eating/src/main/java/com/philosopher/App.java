@@ -10,11 +10,11 @@ public class App
         Fork fork45 = new Fork();
         Fork fork51 = new Fork();
 
-        Philosopher philosopher1 = new Philosopher("philosopher1", fork51, fork12);
-        Philosopher philosopher2 = new Philosopher("philosopher2", fork12, fork23);
-        Philosopher philosopher3 = new Philosopher("philosopher3", fork23, fork34);
-        Philosopher philosopher4 = new Philosopher("philosopher4", fork34, fork45);
-        Philosopher philosopher5 = new Philosopher("philosopher5", fork45, fork51);
+        Thread philosopher1 = new Thread(new Philosopher("philosopher1", fork51, fork12));
+        Thread philosopher2 = new Thread(new Philosopher("philosopher2", fork12, fork23));
+        Thread philosopher3 = new Thread(new Philosopher("philosopher3", fork23, fork34));
+        Thread philosopher4 = new Thread(new Philosopher("philosopher4", fork34, fork45));
+        Thread philosopher5 = new Thread(new Philosopher("philosopher5", fork45, fork51));
 
         philosopher1.start();
         philosopher2.start();

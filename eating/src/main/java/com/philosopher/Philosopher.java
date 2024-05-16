@@ -1,6 +1,6 @@
 package com.philosopher;
 
-public class Philosopher extends Thread {
+class Philosopher implements Runnable {
     String name;
     Fork leftFork;
     Fork rightFork;
@@ -23,7 +23,7 @@ public class Philosopher extends Thread {
 
     public void eat() {
         synchronized(leftFork) {
-            while (!leftFork.isAvailable()) {
+            if (!leftFork.isAvailable()) {
                 try {
                     leftFork.wait();
                 } catch (InterruptedException e) {
@@ -32,7 +32,7 @@ public class Philosopher extends Thread {
             }
 
             synchronized(rightFork) {
-                while (!rightFork.isAvailable()) {
+                if (!rightFork.isAvailable()) {
                     try {
                         rightFork.wait();
                     } catch (InterruptedException e) {
@@ -52,7 +52,6 @@ public class Philosopher extends Thread {
 
                 rightFork.setStatus(true);
                 leftFork.setStatus(true);
-                System.out.println("\n" + name + " is full!");
 
                 leftFork.notifyAll();
                 rightFork.notifyAll();
@@ -62,6 +61,7 @@ public class Philosopher extends Thread {
 
     @Override
     public void run() {
+        
         while (true) {
             
             eat();
